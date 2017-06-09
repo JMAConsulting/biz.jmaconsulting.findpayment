@@ -1,6 +1,6 @@
 <?php
 
-class CRM_Findpayment_Form_Payment_Search extends CRM_Core_Form_Search {
+class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
 
   /**
    * The params that are sent to the query.
