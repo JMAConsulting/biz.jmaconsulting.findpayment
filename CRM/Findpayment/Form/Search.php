@@ -50,6 +50,8 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     $this->_force = CRM_Utils_Request::retrieve('force', 'Boolean', $this, FALSE);
     $this->_limit = CRM_Utils_Request::retrieve('limit', 'Positive', $this);
     $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this, FALSE, 'search');
+    $pid = CRM_Utils_Request::retrieve('crmPID', 'Positive', $this);
+    $pid = empty($pid) ? $this->get(CRM_Utils_Pager::PAGE_ID) : $pid;
 
     $this->assign("context", $this->_context);
 
@@ -60,6 +62,11 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     }
     else {
       $this->_formValues = $this->get('formValues');
+    }
+
+    if ($this->_force) {
+      $this->postProcess();
+      $this->set('force', 0);
     }
 
     $sortID = NULL;
@@ -86,7 +93,7 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     $this->assign("{$prefix}single", $this->_single);
 
     $controller = new CRM_Core_Selector_Controller($selector,
-      $this->get(CRM_Utils_Pager::PAGE_ID),
+      $pid,
       $sortID,
       CRM_Core_Action::VIEW,
       $this,

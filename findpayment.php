@@ -125,31 +125,31 @@ function findpayment_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
- * Functions below this ship commented out. Uncomment as required.
- *
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function findpayment_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  *
+ */
 function findpayment_civicrm_navigationMenu(&$menu) {
-  _findpayment_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'biz.jmaconsulting.findpayment')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _findpayment_civix_navigationMenu($menu);
-} // */
+  // get the id of Search Menu
+  $searchMenuID = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Search...', 'id', 'name');
+
+  // skip adding menu if there is no administer menu
+  if ($searchMenuID) {
+    // get the maximum key under adminster menu
+    $maxKey = max( array_keys($menu[$searchMenuID]['child']));
+    $menu[$searchMenuID]['child'][$maxKey+1] =  array (
+      'attributes' => array (
+        'label'      => 'Find Payment',
+        'name'       => 'Find Payment',
+        'url'        => 'civicrm/payment/search',
+        'permission' => 'administer CiviCRM, access CiviContribute',
+        'operator'   => NULL,
+        'separator'  => TRUE,
+        'parentID'   => $searchMenuID,
+        'navID'      => $maxKey+1,
+        'active'     => 1
+      )
+    );
+  }
+}

@@ -115,6 +115,7 @@ class CRM_Contribute_BAO_Query extends CRM_Core_BAO_Query {
    */
   public static function where(&$query) {
     self::initializeAnySoftCreditClause($query);
+    CRM_Findpayment_BAO_Query::where($query);
     foreach (array_keys($query->_params) as $id) {
       if (empty($query->_params[$id][0])) {
         continue;

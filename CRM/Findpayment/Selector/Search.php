@@ -27,6 +27,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     'id',
     'sort_name',
     'contact_id',
+    'contribution_id',
     'financial_trxn_trxn_date',
     'financial_trxn_total_amount',
     'financial_trxn_currency',
@@ -246,7 +247,6 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     );
 
     while ($result->fetch()) {
-      //CRM_Core_Error::debug_var('$result', $result);
       $links = self::links();
       $checkLineItem = FALSE;
       $row = array();
