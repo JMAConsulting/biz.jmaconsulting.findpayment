@@ -11,6 +11,12 @@ function findpayment_civicrm_config(&$config) {
   _findpayment_civix_civicrm_config($config);
 }
 
+function findpayment_civicrm_queryObjects(&$queryObjects, $type) {
+  if ($type == 'Contact') {
+    $queryObjects[] = new CRM_Findpayment_BAO_Advanced_Query();
+  }
+}
+
 /**
  * Implements hook_civicrm_xmlMenu().
  *
