@@ -1,8 +1,13 @@
 <?php
 
-class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
+class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
 
-  public static function select(&$query) {
+  function &getFields() {
+    $fields = array();
+    return $fields;
+  }
+
+ function select(&$query) {
     $returnProperties = array_keys(self::selectorReturnProperties());
 
     $contactFields = array('sort_name');
@@ -10,6 +15,11 @@ class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
       if (!empty($query->_returnProperties[$fieldName])) {
         if (in_array($fieldName, $contactFields)) {
           $query->_select[$fieldName] = "contact_a.{$fieldName} as $fieldName";
+          $query->_element[$fieldName] = 1;
+          continue;
+        }
+        elseif ($fieldName == 'contribution_id') {
+          $query->_select[$fieldName] = "civicrm_contribution.id as $fieldName";
           $query->_element[$fieldName] = 1;
           continue;
         }
@@ -22,19 +32,30 @@ class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
     }
   }
 
-  public static function where(&$query) {
+  function from($name, $mode, $side) {
+    return NULL;
+  }
+
+ function where(&$query) {
+    // hackish fix as $query->_params doesn't have the submitted values
+    if (!empty($_POST)) {
+
+      $query->_formValues = $_POST;
+      $query->_params = CRM_Contact_BAO_Query::convertFormValues($query->_formValues);
+    }
+
     foreach (array_keys($query->_params) as $id) {
       if (empty($query->_params[$id][0])) {
         continue;
       }
       if (substr($query->_params[$id][0], 0, 15) == 'financial_trxn_') {
         self::whereClauseSingle($query->_params[$id], $query);
-        unset($query->_params[$id]);
+        //unset($query->_params[$id]);
       }
     }
   }
 
-  public static function whereClauseSingle(&$values, &$query) {
+  function whereClauseSingle(&$values, &$query) {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $qillTitles = array(
@@ -79,6 +100,8 @@ class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
           $dataType = 'Integer';
         }
         $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause("civicrm_financial_trxn.{$dbName}", $op, $value, $dataType);
+        $query->_tables['civicrm_financial_trxn']  = $query->_whereTables['civicrm_financial_trxn'] = 1;
+        $query->_tables['civicrm_contribution']  = $query->_whereTables['civicrm_contribution'] = 1;
         list($op, $value) = CRM_Contact_BAO_Query::buildQillForFieldValue('CRM_Financial_DAO_FinancialTrxn', $dbName, $value, $op);
         $query->_qill[$grouping][] = ts('%1 %2 %3', array(1 => $qillTitles[$name], 2 => $op, 3 => $value));
         return;
@@ -147,6 +170,22 @@ class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
 
     $form->assign('validCiviContribute', TRUE);
     $form->setDefaults(array('contribution_test' => 0));
+  }
+
+  public function registerAdvancedSearchPane(&$panes) {
+      $panes['Payments'] = 'financial_trxn';
+  }
+
+  public function getPanesMapper(&$panes) {
+    $panes['Payments'] = 'civicrm_financial_trxn';
+  }
+
+  public function buildAdvancedSearchPaneForm(&$form, $type) {
+    self::buildSearchForm($form);
+  }
+
+  public function setAdvancedSearchPaneTemplatePath(&$paneTemplatePathArray, $type) {
+     $paneTemplatePathArray['financial_trxn'] = 'CRM/Findpayment/Form/Search/Criteria.tpl';
   }
 
   /**
@@ -288,6 +327,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Core_BAO_Query {
    public static function selectorReturnProperties() {
      $properties = array(
        'sort_name' => 1,
+       'contribution_id' => 1,
        'financial_trxn_id' => 1,
        'financial_trxn_trxn_date' => 1,
        'financial_trxn_total_amount' => 1,

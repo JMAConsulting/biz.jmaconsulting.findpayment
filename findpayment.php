@@ -13,7 +13,7 @@ function findpayment_civicrm_config(&$config) {
 
 function findpayment_civicrm_queryObjects(&$queryObjects, $type) {
   if ($type == 'Contact') {
-    $queryObjects[] = new CRM_Findpayment_BAO_Advanced_Query();
+    $queryObjects[] = new CRM_Findpayment_BAO_Query();
   }
 }
 
@@ -107,6 +107,13 @@ function findpayment_civicrm_caseTypes(&$caseTypes) {
   _findpayment_civix_civicrm_caseTypes($caseTypes);
 }
 
+function findpayment_civicrm_buildForm($formName, &$form) {
+  // hide form buttons of 'View' Contribution' page when accessed via 'Find Payment'
+  //   identified by url argument contect=payment
+  if ($formName == 'CRM_Contribute_Form_ContributionView' && CRM_Utils_Array::value('context', $_GET) == 'payment') {
+    CRM_Core_Resources::singleton()->addScriptFile('biz.jmaconsulting.findpayment', 'js/hide_form_buttons.js');
+  }
+}
 /**
  * Implements hook_civicrm_angularModules().
  *
@@ -146,8 +153,8 @@ function findpayment_civicrm_navigationMenu(&$menu) {
     $maxKey = max( array_keys($menu[$searchMenuID]['child']));
     $menu[$searchMenuID]['child'][$maxKey+1] =  array (
       'attributes' => array (
-        'label'      => 'Find Payment',
-        'name'       => 'Find Payment',
+        'label'      => 'Find Payments',
+        'name'       => 'Find Payments',
         'url'        => 'civicrm/payment/search',
         'permission' => 'administer CiviCRM, access CiviContribute',
         'operator'   => NULL,

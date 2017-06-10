@@ -135,8 +135,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     $this->_query = new CRM_Contact_BAO_Query(
       $this->_queryParams,
       CRM_Findpayment_BAO_Query::selectorReturnProperties(),
-      NULL, FALSE, FALSE,
-      CRM_Contact_BAO_Query::MODE_CONTRIBUTE
+      NULL, FALSE, FALSE
     );
 
     $this->_query->_tables['civicrm_financial_trxn'] = $this->_query->_whereTables['civicrm_financial_trxn'] = 1;

@@ -24,11 +24,6 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
   protected $_limit = NULL;
 
   /**
-   * Prefix for the controller.
-   */
-  protected $_prefix = "contribute_";
-
-  /**
    * Processing needed for buildForm and later.
    */
   public function preProcess() {
@@ -40,11 +35,6 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     $this->_done = FALSE;
     // @todo - is this an error - $this->_defaults is used.
     $this->defaults = array();
-
-    /*
-     * we allow the controller to set force/reset externally, useful when we are being
-     * driven by the wizard framework
-     */
 
     $this->_reset = CRM_Utils_Request::retrieve('reset', 'Boolean');
     $this->_force = CRM_Utils_Request::retrieve('force', 'Boolean', $this, FALSE);
@@ -84,27 +74,20 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
       $this->_limit,
       $this->_context
     );
-    $prefix = NULL;
-    if ($this->_context == 'user') {
-      $prefix = $this->_prefix;
-    }
 
-    $this->assign("{$prefix}limit", $this->_limit);
-    $this->assign("{$prefix}single", $this->_single);
+    $this->assign("limit", $this->_limit);
+    $this->assign("single", $this->_single);
 
     $controller = new CRM_Core_Selector_Controller($selector,
       $pid,
       $sortID,
       CRM_Core_Action::VIEW,
       $this,
-      CRM_Core_Selector_Controller::TRANSFER,
-      $prefix
+      CRM_Core_Selector_Controller::TRANSFER
     );
 
     $controller->setEmbedded(TRUE);
     $controller->moveFromSessionToTemplate();
-
-    $this->assign('contributionSummary', $this->get('summary'));
   }
 
   /**
@@ -114,6 +97,19 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     parent::buildQuickForm();
 
     CRM_Findpayment_BAO_Query::buildSearchForm($this);
+
+    $rows = $this->get('rows');
+    if (is_array($rows)) {
+      if (!$this->_single) {
+        $this->addRowSelectors($rows);
+      }
+
+      $tasks = array(
+        CRM_Findpayment_Task::EXPORT_PAYMENTS => ts('Export Payments'),
+      );
+      $this->addTaskMenu($tasks);
+    }
+
   }
 
   public function postProcess() {
@@ -149,25 +145,15 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     );
     $selector->setKey($this->controller->_key);
 
-    $prefix = NULL;
-    if ($this->_context == 'basic' || $this->_context == 'user') {
-      $prefix = $this->_prefix;
-    }
-
     $controller = new CRM_Core_Selector_Controller($selector,
       $this->get(CRM_Utils_Pager::PAGE_ID),
       $sortID,
       CRM_Core_Action::VIEW,
       $this,
-      CRM_Core_Selector_Controller::SESSION,
-      $prefix
+      CRM_Core_Selector_Controller::SESSION
     );
     $controller->setEmbedded(TRUE);
 
-    $query = &$selector->getQuery();
-    if ($this->_context == 'user') {
-      $query->setSkipPermission(TRUE);
-    }
     $controller->run();
   }
 

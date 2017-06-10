@@ -58,7 +58,7 @@ class CRM_Findpayment_StateMachine_Search extends CRM_Core_StateMachine {
       $value = $this->_controller->get('task');
     }
     $this->_controller->set('task', $value);
-    return CRM_Contribute_Task::getTask($value);
+    return CRM_Findpayment_Task::getTask($value);
   }
 
   /**
