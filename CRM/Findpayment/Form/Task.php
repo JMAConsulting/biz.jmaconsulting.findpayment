@@ -14,35 +14,8 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
    *
    * @var array
    */
-  public $_contactIds;
+  public $_paymentIDs;
 
-  /**
-   * The array that holds all the contact types
-   *
-   * @var array
-   */
-  public $_contactTypes;
-
-  /**
-   * The additional clause that we restrict the search with
-   *
-   * @var string
-   */
-  protected $_componentClause = NULL;
-
-  /**
-   * The name of the temp table where we store the contact IDs
-   *
-   * @var string
-   */
-  protected $_componentTable = NULL;
-
-  /**
-   * The array that holds all the component ids
-   *
-   * @var array
-   */
-  protected $_componentIds;
 
   /**
    * This includes the submitted values of the search form
@@ -63,11 +36,52 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
    * @param bool $useTable
    */
   public static function preProcessCommon(&$form, $useTable = FALSE) {
-    $form->_contactIds = array();
-    $form->_contactTypes = array();
+    $form->_paymentIDs = array();
+
+    $values = $form->controller->exportValues($form->get('searchFormName'));
+
+    if (isset($values['radio_ts']) && $values['radio_ts'] == 'ts_sel') {
+      foreach ($values as $name => $value) {
+        if (substr($name, 0, CRM_Core_Form::CB_PREFIX_LEN) == CRM_Core_Form::CB_PREFIX) {
+          $form->_paymentIDs[] = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
+        }
+      }
+    }
+    else {
+      $returnProperties = array(
+        'financial_trxn_id' => 1,
+      );
+      $query = new CRM_Contact_BAO_Query(
+        $queryParams = $form->get('queryParams'),
+        CRM_Findpayment_BAO_Query::selectorReturnProperties(),
+        NULL, FALSE, FALSE
+      );
+
+      $query->_tables['civicrm_financial_trxn'] = $query->_whereTables['civicrm_financial_trxn'] = 1;
+      $query->_distinctComponentClause = " civicrm_financial_trxn.id ";
+      $query->_groupByComponentClause = " GROUP BY civicrm_financial_trxn.id ";
+
+      $sort = "ORDER BY civicrm_financial_trxn.id desc ";
+      $result = $query->searchQuery(0, 0, $sort,
+      FALSE, FALSE,
+      FALSE, FALSE,
+      FALSE,
+      " civicrm_financial_trxn.is_payment = 1 "
+      );
+      while ($result->fetch()) {
+        $form->_paymentIDs[] = $result->id;
+      }
+    }
+
+    //set the context for redirection for any task actions
+    $session = CRM_Core_Session::singleton();
+    $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', $form);
+    $urlParams = 'force=1';
+    if (CRM_Utils_Rule::qfKey($qfKey)) {
+      $urlParams .= "&qfKey=$qfKey";
+    }
+    $session->replaceUserContext(CRM_Utils_System::url('civicrm/payment/search', $urlParams));
   }
-
-
 
   /**
    * Set default values for the form. Relationship that in edit/view action.

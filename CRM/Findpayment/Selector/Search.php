@@ -220,7 +220,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
    *   the total number of rows for this action
    */
   public function &getRows($action, $offset, $rowCount, $sort, $output = NULL) {
-    $sort = "ORDER BY civicrm_financial_trxn.id ";
+    $sort = "ORDER BY civicrm_financial_trxn.id desc ";
     $result = $this->_query->searchQuery($offset, $rowCount, $sort,
       FALSE, FALSE,
       FALSE, FALSE,
