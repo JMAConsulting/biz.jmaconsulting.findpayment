@@ -72,6 +72,7 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
         $form->_paymentIDs[] = $result->id;
       }
     }
+    $form->assign('totalPaymentIDs', count($form->_paymentIDs));
 
     //set the context for redirection for any task actions
     $session = CRM_Core_Session::singleton();

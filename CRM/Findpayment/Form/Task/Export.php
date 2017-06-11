@@ -1,38 +1,7 @@
 <?php
-/*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.7                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2017                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
- */
 
 /**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2017
- */
-
-/**
- * This class provides the functionality to print contribution records.
+ * This class provides the functionality to export selected payment records.
  */
 class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
 
@@ -41,24 +10,6 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
    */
   public function preProcess() {
     parent::preprocess();
-
-    // set print view, so that print templates are called
-    $this->controller->setPrint(1);
-
-    // get the formatted params
-    $queryParams = $this->get('queryParams');
-
-    $sortID = NULL;
-    if ($this->get(CRM_Utils_Sort::SORT_ID)) {
-      $sortID = CRM_Utils_Sort::sortIDValue($this->get(CRM_Utils_Sort::SORT_ID),
-        $this->get(CRM_Utils_Sort::SORT_DIRECTION)
-      );
-    }
-
-    $selector = new CRM_Contribute_Selector_Search($queryParams, $this->_action, $this->_componentClause);
-    $controller = new CRM_Core_Selector_Controller($selector, NULL, $sortID, CRM_Core_Action::VIEW, $this, CRM_Core_Selector_Controller::SCREEN);
-    $controller->setEmbedded(TRUE);
-    $controller->run();
   }
 
   /**
@@ -76,7 +27,6 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
         array(
           'type' => 'next',
           'name' => ts('Export Payments'),
-          'js' => array('onclick' => 'window.print()'),
           'isDefault' => TRUE,
         ),
         array(
@@ -91,7 +41,66 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
    * Process the form after the input has been submitted and validated.
    */
   public function postProcess() {
-    // redirect to the main search page after printing is over
+
+    $sql = "
+    SELECT cft.*, cc.sort_name, contri.contact_id, contri.contribution_status_id
+    FROM civicrm_financial_trxn cft
+    LEFT JOIN civicrm_entity_financial_trxn ceft ON ceft.financial_trxn_id = cft.id AND ceft.entity_table = 'civicrm_contribution'
+    LEFT JOIN civicrm_contribution contri ON contri.id = ceft.entity_id
+    LEFT JOIN civicrm_contact cc ON cc.id = contri.contact_id
+    WHERE cft.id IN (%s)
+    ";
+    $result = CRM_Core_DAO::executeQuery(sprintf($sql, implode(', ', $this->_paymentIDs)));
+
+    $config = CRM_Core_Config::singleton();
+    $headers = array(
+      'Contact Name',
+      'Contact ID',
+      'Financial Trxn ID/Internal ID',
+      'Transaction Date',
+      'Payment Amount',
+      'Payment Method',
+      'Transaction ID (Unsplit)',
+      'Transaction Status',
+      'Contribution Status',
+    );
+    $csv = '"' . implode("\"$config->fieldSeparator\"",
+        $headers
+      ) . "\"\r\n";
+    while($result->fetch()) {
+      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $result->payment_instrument_id);
+      if (!empty($result->card_type_id)) {
+        $paidByLabel .= sprintf(" (%s %s)",
+          CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $result->card_type_id),
+          ($result->pan_truncation) ? $result->pan_truncation : ''
+        );
+      }
+      elseif (!empty($result->check_number)) {
+        $paidByLabel .= sprintf(" (#%s)", $result->check_number);
+      }
+
+      $payment = array(
+        $result->sort_name,
+        $result->contact_id,
+        $result->id,
+        $result->trxn_date,
+        CRM_Utils_Money::format($result->total_amount, $result->currency),
+        $paidByLabel,
+        $result->trxn_id,
+        CRM_Core_PseudoConstant::getLabel('CRM_Financial_DAO_FinancialTrxn', 'status_id', $result->status_id),
+        CRM_Core_PseudoConstant::getLabel('CRM_Contribute_BAO_Contribution', 'contribution_status_id', $result->contribution_status_id),
+      );
+      $csv .= '"' . implode("\"$config->fieldSeparator\"",
+          $payment
+      ) . "\"\r\n";
+    }
+
+    $fileName = 'Financial_Transactions_' . date('YmdHis') . '.csv';
+    CRM_Utils_System::setHttpHeader('Content-Type', 'text/csv');
+    //Force a download and name the file using the current timestamp.
+    CRM_Utils_System::setHttpHeader('Content-Disposition', 'attachment; filename=' . $fileName);
+    echo $csv;
+    CRM_Utils_System::civiExit();
   }
 
 }

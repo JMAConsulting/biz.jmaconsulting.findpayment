@@ -139,6 +139,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     );
 
     $this->_query->_tables['civicrm_financial_trxn'] = $this->_query->_whereTables['civicrm_financial_trxn'] = 1;
+    $this->_query->_tables['civicrm_contribution'] = $this->_query->_whereTables['civicrm_contribution'] = 1;
     $this->_query->_distinctComponentClause = " civicrm_financial_trxn.id ";
     $this->_query->_groupByComponentClause = " GROUP BY civicrm_financial_trxn.id ";
   }

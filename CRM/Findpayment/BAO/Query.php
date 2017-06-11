@@ -21,6 +21,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
         elseif ($fieldName == 'contribution_id') {
           $query->_select[$fieldName] = "civicrm_contribution.id as $fieldName";
           $query->_element[$fieldName] = 1;
+          $query->_tables['civicrm_contribution'] = 1;
           continue;
         }
         $columnName = str_replace('financial_trxn_', '', $fieldName);
@@ -33,7 +34,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   }
 
   function from($name, $mode, $side) {
-    return NULL;
+    //return NULL;
   }
 
  function where(&$query) {
