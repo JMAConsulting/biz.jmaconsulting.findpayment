@@ -34,7 +34,6 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   }
 
   function from($name, $mode, $side) {
-    //return NULL;
   }
 
  function where(&$query) {
@@ -74,8 +73,12 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       case 'financialtrxn_trxn_date_low':
       case 'financialtrxn_trxn_date_high':
         // process to / from date
-        self::dateQueryBuilder($query, $values,
-          'civicrm_financial_trxn', 'financialtrxn_trxn_date', 'trxn_date', 'Transaction Date'
+        $query->dateQueryBuilder($values,
+          'civicrm_financial_trxn',
+          'financialtrxn_trxn_date',
+          'trxn_date',
+          'Transaction Date',
+          'Y-m-d H:i:s'
         );
         return;
 
@@ -196,136 +199,6 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   public function setAdvancedSearchPaneTemplatePath(&$paneTemplatePathArray, $type) {
      $paneTemplatePathArray['financial_trxn'] = 'CRM/Findpayment/Form/Search/Criteria.tpl';
   }
-
-  /**
-   * Build query for a date field.
-   *
-   * @param array $values
-   * @param string $tableName
-   * @param string $fieldName
-   * @param string $dbFieldName
-   * @param string $fieldTitle
-   * @param bool $appendTimeStamp
-   */
-  public static function dateQueryBuilder(
-    &$query,
-    &$values, $tableName, $fieldName,
-    $dbFieldName, $fieldTitle,
-    $appendTimeStamp = TRUE,
-    $format = 'Y-m-d H:i:s'
-  ) {
-    list($name, $op, $value, $grouping, $wildcard) = $values;
-
-    if ($name == "{$fieldName}_low" ||
-      $name == "{$fieldName}_high"
-    ) {
-
-      $secondOP = $secondPhrase = $secondValue = $secondDate = $secondDateFormat = NULL;
-
-      if ($name == $fieldName . '_low') {
-        $firstOP = '>=';
-        $firstPhrase = ts('greater than or equal to');
-        $firstDate = CRM_Utils_Date::processDate($value, NULL, FALSE, $format);
-
-        $secondValues = $query->getWhereValues("{$fieldName}_high", $grouping);
-        if (!empty($secondValues) && $secondValues[2]) {
-          $secondOP = '<=';
-          $secondPhrase = ts('less than or equal to');
-          $secondValue = $secondValues[2];
-
-          if ($appendTimeStamp && strlen($secondValue) == 10) {
-            $secondValue .= ' 23:59:59';
-          }
-          $secondDate = CRM_Utils_Date::processDate($secondValue, NULL, FALSE, $format);
-        }
-      }
-      elseif ($name == $fieldName . '_high') {
-        $firstOP = '<=';
-        $firstPhrase = ts('less than or equal to');
-
-        if ($appendTimeStamp && strlen($value) == 10) {
-          $value .= ' 23:59:59';
-        }
-        $firstDate = CRM_Utils_Date::processDate($value, NULL, FALSE, $format);
-
-        $secondValues = $query->getWhereValues("{$fieldName}_low", $grouping);
-        if (!empty($secondValues) && $secondValues[2]) {
-          $secondOP = '>=';
-          $secondPhrase = ts('greater than or equal to');
-          $secondValue = $secondValues[2];
-          $secondDate = CRM_Utils_Date::processDate($secondValue, NULL, FALSE, $format);
-        }
-      }
-
-      if (!$appendTimeStamp) {
-        $firstDate = substr($firstDate, 0, 8);
-      }
-      $firstDateFormat = CRM_Utils_Date::customFormat($firstDate);
-
-      if ($secondDate) {
-        if (!$appendTimeStamp) {
-          $secondDate = substr($secondDate, 0, 8);
-        }
-        $secondDateFormat = CRM_Utils_Date::customFormat($secondDate);
-      }
-
-      $query->_tables[$tableName] = $query->_whereTables[$tableName] = 1;
-      if ($secondDate) {
-        $query->_where[$grouping][] = "
-  ( {$tableName}.{$dbFieldName} $firstOP '$firstDate' ) AND
-  ( {$tableName}.{$dbFieldName} $secondOP '$secondDate' )
-  ";
-        $query->_qill[$grouping][] = "$fieldTitle - $firstPhrase \"$firstDateFormat\" " . ts('AND') . " $secondPhrase \"$secondDateFormat\"";
-      }
-      else {
-        $query->_where[$grouping][] = "{$tableName}.{$dbFieldName} $firstOP '$firstDate'";
-        $query->_qill[$grouping][] = "$fieldTitle - $firstPhrase \"$firstDateFormat\"";
-      }
-    }
-
-    if ($name == $fieldName) {
-      //In Get API, for operators other then '=' the $value is in array(op => value) format
-      if (is_array($value) && !empty($value) && in_array(key($value), CRM_Core_DAO::acceptedSQLOperators(), TRUE)) {
-        $op = key($value);
-        $value = $value[$op];
-      }
-
-      $date = $format = NULL;
-      if (strstr($op, 'IN')) {
-        $format = array();
-        foreach ($value as &$date) {
-          $date = CRM_Utils_Date::processDate($date, NULL, FALSE, $format);
-          if (!$appendTimeStamp) {
-            $date = substr($date, 0, 8);
-          }
-          $format[] = CRM_Utils_Date::customFormat($date);
-        }
-        $date = "('" . implode("','", $value) . "')";
-        $format = implode(', ', $format);
-      }
-      elseif ($value && (!strstr($op, 'NULL') && !strstr($op, 'EMPTY'))) {
-        $date = CRM_Utils_Date::processDate($value, NULL, FALSE, $format);
-        if (!$appendTimeStamp) {
-          $date = substr($date, 0, 8);
-        }
-        $format = CRM_Utils_Date::customFormat($date);
-        $date = "'$date'";
-      }
-
-      if ($date) {
-        $query->_where[$grouping][] = "{$tableName}.{$dbFieldName} $op $date";
-      }
-      else {
-        $query->_where[$grouping][] = self::buildClause("{$tableName}.{$dbFieldName}", $op);
-      }
-
-      $query->_tables[$tableName] = $query->_whereTables[$tableName] = 1;
-
-      $op = CRM_Utils_Array::value($op, CRM_Core_SelectValues::getSearchBuilderOperators(), $op);
-      $query->_qill[$grouping][] = "$fieldTitle $op $format";
-    }
-  }
-
 
   /**
    * Get the list of fields required to populate the selector.
