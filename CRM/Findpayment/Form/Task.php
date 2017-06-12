@@ -10,11 +10,11 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
   protected $_task;
 
   /**
-   * The array that holds all the contact ids
+   * The variable that holds all query object result
    *
    * @var array
    */
-  public $_paymentIDs;
+  public $_queryResult;
 
 
   /**
@@ -36,43 +36,39 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
    * @param bool $useTable
    */
   public static function preProcessCommon(&$form, $useTable = FALSE) {
-    $form->_paymentIDs = array();
-
     $values = $form->controller->exportValues($form->get('searchFormName'));
 
+    $additionalWhereClauses = array(
+      " civicrm_financial_trxn.is_payment = 1 ",
+    );
     if (isset($values['radio_ts']) && $values['radio_ts'] == 'ts_sel') {
+      $paymentIDs = array();
       foreach ($values as $name => $value) {
         if (substr($name, 0, CRM_Core_Form::CB_PREFIX_LEN) == CRM_Core_Form::CB_PREFIX) {
-          $form->_paymentIDs[] = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
+          $paymentIDs[] = substr($name, CRM_Core_Form::CB_PREFIX_LEN);
         }
       }
+      $additionalWhereClauses[] = sprintf(" civicrm_financial_trxn.id IN ( %s ) " , implode(', ', $paymentIDs));
     }
-    else {
-      $returnProperties = array(
-        'financial_trxn_id' => 1,
-      );
-      $query = new CRM_Contact_BAO_Query(
-        $queryParams = $form->get('queryParams'),
-        CRM_Findpayment_BAO_Query::selectorReturnProperties(),
-        NULL, FALSE, FALSE
-      );
 
-      $query->_tables['civicrm_financial_trxn'] = $query->_whereTables['civicrm_financial_trxn'] = 1;
-      $query->_distinctComponentClause = " civicrm_financial_trxn.id ";
-      $query->_groupByComponentClause = " GROUP BY civicrm_financial_trxn.id ";
+    $query = new CRM_Contact_BAO_Query(
+      NULL,
+      CRM_Findpayment_BAO_Query::selectorReturnProperties(),
+      NULL, FALSE, FALSE
+    );
+    $query->_tables['civicrm_financial_trxn'] = $query->_whereTables['civicrm_financial_trxn'] = 1;
+    $query->_distinctComponentClause = " civicrm_financial_trxn.id ";
+    $query->_groupByComponentClause = " GROUP BY civicrm_financial_trxn.id ";
+    $sort = " ORDER BY civicrm_financial_trxn.id desc ";
 
-      $sort = "ORDER BY civicrm_financial_trxn.id desc ";
-      $result = $query->searchQuery(0, 0, $sort,
+    $form->_queryResult = $query->searchQuery(0, 0, $sort,
       FALSE, FALSE,
       FALSE, FALSE,
       FALSE,
-      " civicrm_financial_trxn.is_payment = 1 "
-      );
-      while ($result->fetch()) {
-        $form->_paymentIDs[] = $result->id;
-      }
-    }
-    $form->assign('totalPaymentIDs', count($form->_paymentIDs));
+      implode(" AND ", $additionalWhereClauses)
+    );
+
+    $form->assign('totalPaymentIDs', $form->_queryResult->N);
 
     //set the context for redirection for any task actions
     $session = CRM_Core_Session::singleton();

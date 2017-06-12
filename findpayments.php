@@ -1,17 +1,17 @@
 <?php
 
-require_once 'findpayment.civix.php';
+require_once 'findpayments.civix.php';
 
 /**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function findpayment_civicrm_config(&$config) {
-  _findpayment_civix_civicrm_config($config);
+function findpayments_civicrm_config(&$config) {
+  _findpayments_civix_civicrm_config($config);
 }
 
-function findpayment_civicrm_queryObjects(&$queryObjects, $type) {
+function findpayments_civicrm_queryObjects(&$queryObjects, $type) {
   if ($type == 'Contact') {
     $queryObjects[] = new CRM_Findpayment_BAO_Query();
   }
@@ -24,8 +24,8 @@ function findpayment_civicrm_queryObjects(&$queryObjects, $type) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
-function findpayment_civicrm_xmlMenu(&$files) {
-  _findpayment_civix_civicrm_xmlMenu($files);
+function findpayments_civicrm_xmlMenu(&$files) {
+  _findpayments_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -33,8 +33,8 @@ function findpayment_civicrm_xmlMenu(&$files) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function findpayment_civicrm_install() {
-  _findpayment_civix_civicrm_install();
+function findpayments_civicrm_install() {
+  _findpayments_civix_civicrm_install();
 }
 
 /**
@@ -42,8 +42,8 @@ function findpayment_civicrm_install() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
-function findpayment_civicrm_uninstall() {
-  _findpayment_civix_civicrm_uninstall();
+function findpayments_civicrm_uninstall() {
+  _findpayments_civix_civicrm_uninstall();
 }
 
 /**
@@ -51,8 +51,8 @@ function findpayment_civicrm_uninstall() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function findpayment_civicrm_enable() {
-  _findpayment_civix_civicrm_enable();
+function findpayments_civicrm_enable() {
+  _findpayments_civix_civicrm_enable();
 }
 
 /**
@@ -60,8 +60,8 @@ function findpayment_civicrm_enable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  */
-function findpayment_civicrm_disable() {
-  _findpayment_civix_civicrm_disable();
+function findpayments_civicrm_disable() {
+  _findpayments_civix_civicrm_disable();
 }
 
 /**
@@ -76,8 +76,8 @@ function findpayment_civicrm_disable() {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
-function findpayment_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _findpayment_civix_civicrm_upgrade($op, $queue);
+function findpayments_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
+  return _findpayments_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -88,8 +88,8 @@ function findpayment_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
-function findpayment_civicrm_managed(&$entities) {
-  _findpayment_civix_civicrm_managed($entities);
+function findpayments_civicrm_managed(&$entities) {
+  _findpayments_civix_civicrm_managed($entities);
 }
 
 /**
@@ -103,11 +103,11 @@ function findpayment_civicrm_managed(&$entities) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function findpayment_civicrm_caseTypes(&$caseTypes) {
-  _findpayment_civix_civicrm_caseTypes($caseTypes);
+function findpayments_civicrm_caseTypes(&$caseTypes) {
+  _findpayments_civix_civicrm_caseTypes($caseTypes);
 }
 
-function findpayment_civicrm_buildForm($formName, &$form) {
+function findpayments_civicrm_buildForm($formName, &$form) {
   // hide form buttons of 'View' Contribution' page when accessed via 'Find Payment'
   //   identified by url argument contect=payment
   if ($formName == 'CRM_Contribute_Form_ContributionView' && CRM_Utils_Array::value('context', $_GET) == 'payment') {
@@ -124,8 +124,8 @@ function findpayment_civicrm_buildForm($formName, &$form) {
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function findpayment_civicrm_angularModules(&$angularModules) {
-_findpayment_civix_civicrm_angularModules($angularModules);
+function findpayments_civicrm_angularModules(&$angularModules) {
+_findpayments_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -133,8 +133,8 @@ _findpayment_civix_civicrm_angularModules($angularModules);
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
-function findpayment_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _findpayment_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function findpayments_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _findpayments_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -143,9 +143,9 @@ function findpayment_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  *
  */
-function findpayment_civicrm_navigationMenu(&$menu) {
+function findpayments_civicrm_navigationMenu(&$menu) {
   foreach (array('Contributions', 'Search...') as $parentName) {
-    _findpayment_civix_insert_navigation_menu($menu, $parentName, array(
+    _findpayments_civix_insert_navigation_menu($menu, $parentName, array(
       'label' => ts('Find Payments', array('domain' => 'biz.jmaconsulting.findpayment')),
       'name' => 'find_payments',
       'url' => 'civicrm/payment/search?reset=1',

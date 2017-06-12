@@ -60,6 +60,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $qillTitles = array(
+      'financialtrxn_id' => ts('Internal ID'),
       'financialtrxn_trxn_id' => ts('Transaction ID'),
       'financialtrxn_currency' => ts('Currency'),
       'financialtrxn_payment_instrument_id' => ts('Payment Method'),
@@ -88,6 +89,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
         );
         return;
 
+      case 'financialtrxn_id':
       case 'financialtrxn_trxn_id':
       case 'financialtrxn_currency':
       case 'financialtrxn_payment_instrument_id':
@@ -127,29 +129,35 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
 
     $form->add('text', 'financialtrxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
 
+    $form->add('select', 'financialtrxn_payment_instrument_id', ts('Payment Method'),
+      CRM_Contribute_PseudoConstant::paymentInstrument(),
+      FALSE, array('class' => 'crm-select2', 'multiple' => 'multiple', 'placeholder' => '- any -')
+    );
+
+    $form->add('select', 'financialtrxn_currency',
+      ts('Currency'),
+      CRM_Core_PseudoConstant::get('CRM_Contribute_DAO_Contribution', 'currency', array('labelColumn' => 'name')),
+      FALSE, array('class' => 'crm-select2', 'placeholder' => '- select -')
+    );
+
+    $form->add('select', 'financialtrxn_status_id',
+      ts('Contribution Status'), CRM_Core_PseudoConstant::get('CRM_Contribute_DAO_Contribution', 'contribution_status_id'),
+      FALSE, array('class' => 'crm-select2', 'multiple' => 'multiple', 'placeholder' => '- any -')
+    );
+
     foreach (array(
-      'financialtrxn_currency' => 'Contribution',
-      'financialtrxn_status_id' => 'Contribution',
-      'financialtrxn_payment_instrument_id' => 'Contribution',
-      'financialtrxn_card_type_id' => 'FinancialTrxn',
-      'financialtrxn_check_number' => 'FinancialTrxn',
-      'financialtrxn_pan_truncation' => 'FinancialTrxn',
-    ) as $fieldName => $entity) {
+      'financialtrxn_card_type_id',
+      'financialtrxn_check_number',
+      'financialtrxn_pan_truncation',
+    ) as $fieldName) {
       $columnName = str_replace('financialtrxn_', '', $fieldName);
-      $columnName = ($columnName == 'status_id') ? 'contribution_status_id' : $columnName;
       $attributes = array(
-        'entity' => $entity,
+        'entity' => 'FinancialTrxn',
         'name' => $columnName,
         'action' => 'get',
       );
-      if ($columnName == 'contribution_status_id') {
-        $attributes['label'] = ts('Contribution Status');
-      }
-      elseif ($columnName == 'card_type_id') {
+      if ($columnName == 'card_type_id') {
         $attributes['label'] = ts('Card Type');
-      }
-      elseif ($columnName == 'payment_instrument_id') {
-        $attributes['label'] = ts('Payment Method');
       }
       $form->addField($fieldName, $attributes);
     }

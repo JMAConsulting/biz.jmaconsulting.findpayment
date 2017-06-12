@@ -42,18 +42,6 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
    * Process the form after the input has been submitted and validated.
    */
   public function postProcess() {
-
-    $sql = "
-    SELECT cft.*, cc.sort_name, contri.contact_id, contri.contribution_status_id
-    FROM civicrm_financial_trxn cft
-    LEFT JOIN civicrm_entity_financial_trxn ceft ON ceft.financial_trxn_id = cft.id AND ceft.entity_table = 'civicrm_contribution'
-    LEFT JOIN civicrm_contribution contri ON contri.id = ceft.entity_id
-    LEFT JOIN civicrm_contact cc ON cc.id = contri.contact_id
-    WHERE cft.id IN (%s)
-    ORDER BY cft.id DESC
-    ";
-    $result = CRM_Core_DAO::executeQuery(sprintf($sql, implode(', ', $this->_paymentIDs)));
-
     $config = CRM_Core_Config::singleton();
     $headers = array(
       ts('Contact Name'),
@@ -69,28 +57,29 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
     $csv = '"' . implode("\"$config->fieldSeparator\"",
         $headers
       ) . "\"\r\n";
-    while($result->fetch()) {
-      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $result->payment_instrument_id);
-      if (!empty($result->card_type_id)) {
+
+    while ($this->_queryResult->fetch()) {
+      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $this->_queryResult->financialtrxn_payment_instrument_id);
+      if (!empty($this->_queryResult->financialtrxn_card_type_id)) {
         $paidByLabel .= sprintf(" (%s %s)",
-          CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $result->card_type_id),
-          ($result->pan_truncation) ? $result->pan_truncation : ''
+          CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $this->_queryResult->financialtrxn_card_type_id),
+          ($this->_queryResult->financialtrxn_pan_truncation) ? $this->_queryResult->financialtrxn_pan_truncation : ''
         );
       }
-      elseif (!empty($result->check_number)) {
-        $paidByLabel .= sprintf(" (#%s)", $result->check_number);
+      elseif (!empty($this->_queryResult->financialtrxn_check_number)) {
+        $paidByLabel .= sprintf(" (#%s)", $this->_queryResult->financialtrxn_check_number);
       }
 
       $payment = array(
-        $result->sort_name,
-        $result->contact_id,
-        $result->id,
-        $result->trxn_date,
-        CRM_Utils_Money::format($result->total_amount, $result->currency),
+        $this->_queryResult->sort_name,
+        $this->_queryResult->contact_id,
+        $this->_queryResult->financialtrxn_id,
+        $this->_queryResult->financialtrxn_trxn_date,
+        CRM_Utils_Money::format($this->_queryResult->financialtrxn_total_amount, $this->_queryResult->financialtrxn_currency),
         $paidByLabel,
-        $result->trxn_id,
-        CRM_Core_PseudoConstant::getLabel('CRM_Financial_DAO_FinancialTrxn', 'status_id', $result->status_id),
-        CRM_Core_PseudoConstant::getLabel('CRM_Contribute_BAO_Contribution', 'contribution_status_id', $result->contribution_status_id),
+        $this->_queryResult->financialtrxn_trxn_id,
+        CRM_Core_PseudoConstant::getLabel('CRM_Financial_DAO_FinancialTrxn', 'status_id', $this->_queryResult->financialtrxn_status_id),
+        CRM_Core_PseudoConstant::getLabel('CRM_Contribute_BAO_Contribution', 'contribution_status_id', $this->_queryResult->financialtrxn_status_id),
       );
       $csv .= '"' . implode("\"$config->fieldSeparator\"",
           $payment

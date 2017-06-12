@@ -37,8 +37,8 @@
           {$form.financialtrxn_status_id.html}
         </div>
         <div class="float-left">
-          {$form.financialtrxn_trxn_id.label}<br />
-          {$form.financialtrxn_trxn_id.html}
+          {$form.financialtrxn_payment_instrument_id.label}<br />
+          {$form.financialtrxn_payment_instrument_id.html|crmAddClass:twenty}
         </div>
       </td>
     </tr>
@@ -46,8 +46,8 @@
     <tr>
       <td>
         <div class="float-left">
-          {$form.financialtrxn_payment_instrument_id.label}<br />
-          {$form.financialtrxn_payment_instrument_id.html|crmAddClass:twenty}
+          {$form.financialtrxn_trxn_id.label}<br />
+          {$form.financialtrxn_trxn_id.html}
         </div>
         <div class="float-left" id="financialtrxn_check_number_wrapper">
           {$form.financialtrxn_check_number.label} <br />

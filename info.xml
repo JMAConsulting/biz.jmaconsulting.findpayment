@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<extension key="biz.jmaconsulting.findpayment" type="module">
-  <file>findpayment</file>
+<extension key="biz.jmaconsulting.findpayments" type="module">
+  <file>findpayments</file>
   <name>Find Payment Extension</name>
   <description>This extension add 'Find Payment' search form in CiviCRM.</description>
   <license>AGPL-3.0</license>
