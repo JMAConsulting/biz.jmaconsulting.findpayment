@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class to render contribution search results.
+ * Class to render payment search results.
  */
 class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements CRM_Core_Selector_API {
 
@@ -28,16 +28,16 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     'sort_name',
     'contact_id',
     'contribution_id',
-    'financial_trxn_trxn_date',
-    'financial_trxn_total_amount',
-    'financial_trxn_currency',
-    'financial_trxn_trxn_id',
-    'financial_trxn_status_id',
-    'financial_trxn_payment_processor_id',
-    'financial_trxn_payment_instrument_id',
-    'financial_trxn_card_type_id',
-    'financial_trxn_check_number',
-    'financial_trxn_pan_truncation',
+    'financialtrxn_trxn_date',
+    'financialtrxn_total_amount',
+    'financialtrxn_currency',
+    'financialtrxn_trxn_id',
+    'financialtrxn_status_id',
+    'financialtrxn_payment_processor_id',
+    'financialtrxn_payment_instrument_id',
+    'financialtrxn_card_type_id',
+    'financialtrxn_check_number',
+    'financialtrxn_pan_truncation',
   );
 
   /**
@@ -231,7 +231,6 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     // process the result of the query
     $rows = array();
 
-    //CRM-4418 check for view/edit/delete
     $permissions = array(CRM_Core_Permission::VIEW);
     if (CRM_Core_Permission::check('edit contributions')) {
       $permissions[] = CRM_Core_Permission::EDIT;
@@ -258,22 +257,22 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
         }
       }
 
-      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $row['financial_trxn_payment_instrument_id']);
-      if (!empty($row['financial_trxn_card_type_id'])) {
-        $creditCardType = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $row['financial_trxn_card_type_id']);
+      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $row['financialtrxn_payment_instrument_id']);
+      if (!empty($row['financialtrxn_card_type_id'])) {
+        $creditCardType = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $row['financialtrxn_card_type_id']);
         $pantruncation = '';
-        if ($row['financial_trxn_pan_truncation']) {
-          $pantruncation = ": " . $row['financial_trxn_pan_truncation'];
+        if ($row['financialtrxn_pan_truncation']) {
+          $pantruncation = ": " . $row['financialtrxn_pan_truncation'];
         }
         $paidByLabel .= " ({$creditCardType}{$pantruncation})";
       }
-      elseif (!empty($row['financial_trxn_check_number'])) {
-        $paidByLabel .= sprintf(" (#%s)", $row['financial_trxn_check_number']);
+      elseif (!empty($row['financialtrxn_check_number'])) {
+        $paidByLabel .= sprintf(" (#%s)", $row['financialtrxn_check_number']);
       }
-      $row['financial_trxn_payment_instrument_id'] = $paidByLabel;
+      $row['financialtrxn_payment_instrument_id'] = $paidByLabel;
 
       // add contribution status name
-      $row['status_name'] = CRM_Utils_Array::value($row['financial_trxn_status_id'],
+      $row['status_name'] = CRM_Utils_Array::value($row['financialtrxn_status_id'],
         $contributionStatuses
       );
 
@@ -325,28 +324,28 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
       ),
       array(
         'name' => ts('Amount'),
-        'sort' => 'financial_trxn_total_amount',
+        'sort' => 'financialtrxn_total_amount',
         'direction' => CRM_Utils_Sort::DONTCARE,
-        'field_name' => 'financial_trxn_total_amount',
+        'field_name' => 'financialtrxn_total_amount',
       ),
       array(
         'name' => ts('Payment Method'),
-        'sort' => 'financial_trxn_payment_instrument_id',
+        'sort' => 'financialtrxn_payment_instrument_id',
         'direction' => CRM_Utils_Sort::DONTCARE,
-        'field_name' => 'financial_trxn_payment_instrument_id',
+        'field_name' => 'financialtrxn_payment_instrument_id',
       ),
       array(
         'name' => ts('Transaction Date'),
-        'sort' => 'financial_trxn_trxn_date',
+        'sort' => 'financialtrxn_trxn_date',
         'type' => 'date',
         'direction' => CRM_Utils_Sort::DONTCARE,
-        'field_name' => 'financial_trxn_trxn_date',
+        'field_name' => 'financialtrxn_trxn_date',
       ),
       array(
         'name' => ts('Transaction ID'),
-        'sort' => 'financial_trxn_trxn_id',
+        'sort' => 'financialtrxn_trxn_id',
         'direction' => CRM_Utils_Sort::DONTCARE,
-        'field_name' => 'financial_trxn_trxn_id',
+        'field_name' => 'financialtrxn_trxn_id',
       ),
       array(
         'name' => ts('Status'),
@@ -392,14 +391,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
    *   name of the file
    */
   public function getExportFileName($output = 'csv') {
-    return ts('CiviCRM Contribution Search');
-  }
-
-  /**
-   * @return mixed
-   */
-  public function getSummary() {
-    return $this->_query->summaryContribution($this->_context);
+    return ts('CiviCRM Payment Search');
   }
 
 }

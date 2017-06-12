@@ -10,6 +10,7 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
    */
   public function preProcess() {
     parent::preprocess();
+    $this->setTitle(ts('Export Payments'));
   }
 
   /**
@@ -49,20 +50,21 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
     LEFT JOIN civicrm_contribution contri ON contri.id = ceft.entity_id
     LEFT JOIN civicrm_contact cc ON cc.id = contri.contact_id
     WHERE cft.id IN (%s)
+    ORDER BY cft.id DESC
     ";
     $result = CRM_Core_DAO::executeQuery(sprintf($sql, implode(', ', $this->_paymentIDs)));
 
     $config = CRM_Core_Config::singleton();
     $headers = array(
-      'Contact Name',
-      'Contact ID',
-      'Financial Trxn ID/Internal ID',
-      'Transaction Date',
-      'Payment Amount',
-      'Payment Method',
-      'Transaction ID (Unsplit)',
-      'Transaction Status',
-      'Contribution Status',
+      ts('Contact Name'),
+      ts('Contact ID'),
+      ts('Financial Trxn ID/Internal ID'),
+      ts('Transaction Date'),
+      ts('Payment Amount'),
+      ts('Payment Method'),
+      ts('Transaction ID (Unsplit)'),
+      ts('Transaction Status'),
+      ts('Contribution Status'),
     );
     $csv = '"' . implode("\"$config->fieldSeparator\"",
         $headers
@@ -95,7 +97,7 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
       ) . "\"\r\n";
     }
 
-    $fileName = 'Financial_Transactions_' . date('YmdHis') . '.csv';
+    $fileName = 'Export_Payments_' . date('YmdHis') . '.csv';
     CRM_Utils_System::setHttpHeader('Content-Type', 'text/csv');
     //Force a download and name the file using the current timestamp.
     CRM_Utils_System::setHttpHeader('Content-Disposition', 'attachment; filename=' . $fileName);

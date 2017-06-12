@@ -24,7 +24,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
           $query->_tables['civicrm_contribution'] = 1;
           continue;
         }
-        $columnName = str_replace('financial_trxn_', '', $fieldName);
+        $columnName = str_replace('financialtrxn_', '', $fieldName);
         $query->_select[$fieldName] = "civicrm_financial_trxn.{$columnName} as $fieldName";
         $query->_element[$fieldName] = 1;
         $query->_tables['civicrm_contribution'] = 1;
@@ -49,7 +49,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       if (empty($query->_params[$id][0])) {
         continue;
       }
-      if (substr($query->_params[$id][0], 0, 15) == 'financial_trxn_') {
+      if (substr($query->_params[$id][0], 0, 15) == 'financialtrxn_') {
         self::whereClauseSingle($query->_params[$id], $query);
         //unset($query->_params[$id]);
       }
@@ -60,42 +60,42 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $qillTitles = array(
-      'financial_trxn_trxn_id' => ts('Transaction ID'),
-      'financial_trxn_currency' => ts('Currency'),
-      'financial_trxn_payment_instrument_id' => ts('Payment Method'),
-      'financial_trxn_status_id' => ts('Contribution Status(s)'),
-      'financial_trxn_check_number' => ts('Check Number'),
-      'financial_trxn_card_type_id' => ts('Credit Card Type'),
-      'financial_trxn_pan_truncation' => ts('Pan Truncation'),
+      'financialtrxn_trxn_id' => ts('Transaction ID'),
+      'financialtrxn_currency' => ts('Currency'),
+      'financialtrxn_payment_instrument_id' => ts('Payment Method'),
+      'financialtrxn_status_id' => ts('Contribution Status(s)'),
+      'financialtrxn_check_number' => ts('Check Number'),
+      'financialtrxn_card_type_id' => ts('Credit Card Type'),
+      'financialtrxn_pan_truncation' => ts('Pan Truncation'),
     );
     switch ($name) {
-      case 'financial_trxn_trxn_date':
-      case 'financial_trxn_trxn_date_low':
-      case 'financial_trxn_trxn_date_high':
+      case 'financialtrxn_trxn_date':
+      case 'financialtrxn_trxn_date_low':
+      case 'financialtrxn_trxn_date_high':
         // process to / from date
         self::dateQueryBuilder($query, $values,
-          'civicrm_financial_trxn', 'financial_trxn_trxn_date', 'trxn_date', 'Transaction Date'
+          'civicrm_financial_trxn', 'financialtrxn_trxn_date', 'trxn_date', 'Transaction Date'
         );
         return;
 
-      case 'financial_trxn_amount_low':
-      case 'financial_trxn_amount_high':
+      case 'financialtrxn_amount_low':
+      case 'financialtrxn_amount_high':
         // process min/max amount
         $query->numberRangeBuilder($values,
-          'civicrm_financial_trxn', 'financial_trxn_amount',
+          'civicrm_financial_trxn', 'financialtrxn_amount',
           'total_amount', 'Payment Amount',
           NULL
         );
         return;
 
-      case 'financial_trxn_trxn_id':
-      case 'financial_trxn_currency':
-      case 'financial_trxn_payment_instrument_id':
-      case 'financial_trxn_status_id':
-      case 'financial_trxn_check_number':
-      case 'financial_trxn_card_type_id':
-      case 'financial_trxn_pan_truncation':
-        $dbName = str_replace('financial_trxn_', '', $name);
+      case 'financialtrxn_trxn_id':
+      case 'financialtrxn_currency':
+      case 'financialtrxn_payment_instrument_id':
+      case 'financialtrxn_status_id':
+      case 'financialtrxn_check_number':
+      case 'financialtrxn_card_type_id':
+      case 'financialtrxn_pan_truncation':
+        $dbName = str_replace('financialtrxn_', '', $name);
         $dataType = "String";
         if (in_array($dbName, array('payment_instrument_id', 'status_id', 'card_type_id'))) {
           $dataType = 'Integer';
@@ -115,27 +115,27 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
    * @param CRM_Core_Form $form
    */
   public static function buildSearchForm(&$form) {
-    CRM_Core_Form_Date::buildDateRange($form, 'financial_trxn_trxn_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
+    CRM_Core_Form_Date::buildDateRange($form, 'financialtrxn_trxn_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
 
-    $form->add('text', 'financial_trxn_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
-    $form->addRule('financial_trxn_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
+    $form->add('text', 'financialtrxn_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
+    $form->addRule('financialtrxn_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
 
-    $form->add('text', 'financial_trxn_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
-    $form->addRule('financial_trxn_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+    $form->add('text', 'financialtrxn_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
+    $form->addRule('financialtrxn_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
     $form->add('text', 'contribution_id', ts('Invoice ID'), array('size' => 6, 'maxlength' => 8));
 
-    $form->add('text', 'financial_trxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
+    $form->add('text', 'financialtrxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
 
     foreach (array(
-      'financial_trxn_currency' => 'Contribution',
-      'financial_trxn_status_id' => 'Contribution',
-      'financial_trxn_payment_instrument_id' => 'Contribution',
-      'financial_trxn_card_type_id' => 'FinancialTrxn',
-      'financial_trxn_check_number' => 'FinancialTrxn',
-      'financial_trxn_pan_truncation' => 'FinancialTrxn',
+      'financialtrxn_currency' => 'Contribution',
+      'financialtrxn_status_id' => 'Contribution',
+      'financialtrxn_payment_instrument_id' => 'Contribution',
+      'financialtrxn_card_type_id' => 'FinancialTrxn',
+      'financialtrxn_check_number' => 'FinancialTrxn',
+      'financialtrxn_pan_truncation' => 'FinancialTrxn',
     ) as $fieldName => $entity) {
-      $columnName = str_replace('financial_trxn_', '', $fieldName);
+      $columnName = str_replace('financialtrxn_', '', $fieldName);
       $columnName = ($columnName == 'status_id') ? 'contribution_status_id' : $columnName;
       $attributes = array(
         'entity' => $entity,
@@ -174,7 +174,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   }
 
   public function registerAdvancedSearchPane(&$panes) {
-      $panes['Payments'] = 'financial_trxn';
+    $panes['Payments'] = 'financial_trxn';
   }
 
   public function getPanesMapper(&$panes) {
@@ -329,16 +329,16 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
      $properties = array(
        'sort_name' => 1,
        'contribution_id' => 1,
-       'financial_trxn_id' => 1,
-       'financial_trxn_trxn_date' => 1,
-       'financial_trxn_total_amount' => 1,
-       'financial_trxn_currency' => 1,
-       'financial_trxn_trxn_id' => 1,
-       'financial_trxn_status_id' => 1,
-       'financial_trxn_payment_instrument_id' => 1,
-       'financial_trxn_card_type_id' => 1,
-       'financial_trxn_check_number' => 1,
-       'financial_trxn_pan_truncation' => 1,
+       'financialtrxn_id' => 1,
+       'financialtrxn_trxn_date' => 1,
+       'financialtrxn_total_amount' => 1,
+       'financialtrxn_currency' => 1,
+       'financialtrxn_trxn_id' => 1,
+       'financialtrxn_status_id' => 1,
+       'financialtrxn_payment_instrument_id' => 1,
+       'financialtrxn_card_type_id' => 1,
+       'financialtrxn_check_number' => 1,
+       'financialtrxn_pan_truncation' => 1,
      );
 
      return $properties;
