@@ -41,11 +41,11 @@
             <td class="crm-contribution-{$columnName}">
               {$row.$columnName|crmDate}
             </td>
-          {elseif $column.field_name == 'financial_trxn_total_amount'}
+          {elseif $column.field_name == 'financialtrxn_total_amount'}
             <td class="crm-{$columnName} crm-{$columnName}_{$row.columnName}">
             <a class="nowrap bold crm-expand-row" title="{ts}view contribution{/ts}" href="{crmURL p='civicrm/contact/view/contribution'
               q="reset=1&id=`$row.contribution_id`&cid=`$row.contact_id`&action=view&context=payment&selectedChild=contribute"}">
-              &nbsp; {$row.financial_trxn_total_amount|crmMoney:$row.financial_trxn_currency}
+              &nbsp; {$row.financialtrxn_total_amount|crmMoney:$row.financial_trxn_currency}
             </a>
           </td>
           {else}

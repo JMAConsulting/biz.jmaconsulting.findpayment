@@ -111,7 +111,7 @@ function findpayments_civicrm_buildForm($formName, &$form) {
   // hide form buttons of 'View' Contribution' page when accessed via 'Find Payment'
   //   identified by url argument contect=payment
   if ($formName == 'CRM_Contribute_Form_ContributionView' && CRM_Utils_Array::value('context', $_GET) == 'payment') {
-    CRM_Core_Resources::singleton()->addScriptFile('biz.jmaconsulting.findpayment', 'js/hide_form_buttons.js');
+    CRM_Core_Resources::singleton()->addScriptFile('biz.jmaconsulting.findpayments', 'js/hide_form_buttons.js');
   }
 }
 /**
