@@ -144,25 +144,14 @@ function findpayment_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  */
 function findpayment_civicrm_navigationMenu(&$menu) {
-  // get the id of Search Menu
-  $searchMenuID = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Search...', 'id', 'name');
-
-  // skip adding menu if there is no administer menu
-  if ($searchMenuID) {
-    // get the maximum key under adminster menu
-    $maxKey = max( array_keys($menu[$searchMenuID]['child']));
-    $menu[$searchMenuID]['child'][$maxKey+1] =  array (
-      'attributes' => array (
-        'label'      => 'Find Payments',
-        'name'       => 'Find Payments',
-        'url'        => 'civicrm/payment/search',
-        'permission' => 'administer CiviCRM, access CiviContribute',
-        'operator'   => NULL,
-        'separator'  => TRUE,
-        'parentID'   => $searchMenuID,
-        'navID'      => $maxKey+1,
-        'active'     => 1
-      )
-    );
+  foreach (array('Contributions', 'Search...') as $parentName) {
+    _findpayment_civix_insert_navigation_menu($menu, $parentName, array(
+      'label' => ts('Find Payments', array('domain' => 'biz.jmaconsulting.findpayment')),
+      'name' => 'find_payments',
+      'url' => 'civicrm/payment/search?reset=1',
+      'permission' => 'administer CiviCRM,access CiviContribute',
+      'operator' => 'AND',
+      'separator' => ($parentName == 'Contributions') ? FALSE : TRUE,
+    ));
   }
 }

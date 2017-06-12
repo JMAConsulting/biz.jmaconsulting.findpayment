@@ -49,9 +49,9 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       if (empty($query->_params[$id][0])) {
         continue;
       }
-      if (substr($query->_params[$id][0], 0, 15) == 'financialtrxn_') {
-        self::whereClauseSingle($query->_params[$id], $query);
-        //unset($query->_params[$id]);
+      if (substr($query->_params[$id][0], 0, 14) == 'financialtrxn_') {
+        $this->whereClauseSingle($query->_params[$id], $query);
+        unset($query->_params[$id]);
       }
     }
   }
