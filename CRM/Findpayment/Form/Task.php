@@ -37,6 +37,7 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
    */
   public static function preProcessCommon(&$form, $useTable = FALSE) {
     $values = $form->controller->exportValues($form->get('searchFormName'));
+    $queryParams = array();
 
     $additionalWhereClauses = array(
       " civicrm_financial_trxn.is_payment = 1 ",
@@ -50,9 +51,12 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
       }
       $additionalWhereClauses[] = sprintf(" civicrm_financial_trxn.id IN ( %s ) " , implode(', ', $paymentIDs));
     }
+    else {
+      $queryParams = CRM_Contact_BAO_Query::convertFormValues($values);
+    }
 
     $query = new CRM_Contact_BAO_Query(
-      NULL,
+      $queryParams,
       CRM_Findpayment_BAO_Query::selectorReturnProperties(),
       NULL, FALSE, FALSE
     );
