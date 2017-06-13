@@ -18,7 +18,6 @@ class CRM_Findpayment_Task {
    *   the set of tasks for a group of contacts
    */
   public static function tasks() {
-    if (!(self::$_tasks)) {
       self::$_tasks = array(
         50 => array(
           'title' => ts('Export Payments'),
@@ -26,7 +25,6 @@ class CRM_Findpayment_Task {
           'result' => FALSE,
         ),
       );
-    }
 
     return self::$_tasks;
   }

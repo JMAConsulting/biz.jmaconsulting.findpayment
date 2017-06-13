@@ -112,6 +112,8 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
    * @param CRM_Core_Form $form
    */
   public static function buildSearchForm(&$form) {
+    $form->add('hidden', 'hidden_financial_trxn', 1);
+
     CRM_Core_Form_Date::buildDateRange($form, 'financialtrxn_trxn_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
 
     $form->add('text', 'financialtrxn_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
@@ -171,9 +173,6 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
         FALSE, array('class' => 'crm-select2')
       );
     }
-
-    $form->assign('validCiviContribute', TRUE);
-    $form->setDefaults(array('contribution_test' => 0));
   }
 
   public function registerAdvancedSearchPane(&$panes) {
