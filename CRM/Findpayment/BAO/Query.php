@@ -29,13 +29,6 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   }
 
  function where(&$query) {
-    // hackish fix as $query->_params doesn't have the submitted values
-    if (!empty($_POST)) {
-
-      $query->_formValues = $_POST;
-      $query->_params = CRM_Contact_BAO_Query::convertFormValues($query->_formValues);
-    }
-
     foreach (array_keys($query->_params) as $id) {
       if (empty($query->_params[$id][0])) {
         continue;
