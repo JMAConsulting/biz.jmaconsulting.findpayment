@@ -122,8 +122,26 @@ function findpayments_civicrm_preProcess($formName, &$form) {
     if ($form->getVar('_componentMode') == PAYMENT_MODE) {
       $modeValue = CRM_Contact_Form_Search::getModeValue(PAYMENT_MODE);
       $form->assign($modeValue);
-      CRM_Contact_Form_Search::$_selectorName = 'CRM_Findpayment_Selector_Search';
-      $form->set('selectorName', CRM_Contact_Form_Search::$_selectorName);
+      $form->setVar('_modeValue', $modeValue);
+      CRM_Contact_Form_Search::$_selectorName = $modeValue['selectorName'];
+      $form->set('selectorName', $modeValue['selectorName']);
+      $submittedParams = $form->getVar('_params');
+      $selector = new $modeValue['selectorName'](
+         $submittedParams,
+         $form->_action,
+         NULL, FALSE, NULL,
+         "search", "advanced"
+      );
+      $selector->setKey($form->controller->_key);
+      $controller = new CRM_Contact_Selector_Controller($selector,
+        $form->get(CRM_Utils_Pager::PAGE_ID),
+        $form->get(CRM_Utils_Sort::SORT_ID),
+        CRM_Core_Action::VIEW,
+        $form,
+        CRM_Core_Selector_Controller::TRANSFER
+      );
+      $controller->setEmbedded(TRUE);
+      $controller->moveFromSessionToTemplate();
     }
   }
 }
