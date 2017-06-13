@@ -110,17 +110,17 @@ function findpayments_civicrm_caseTypes(&$caseTypes) {
 
 function findpayments_civicrm_preProcess($formName, &$form) {
   if ('CRM_Contact_Form_Search_Advanced' == $formName) {
+    $modeValue = array(
+      'selectorName' => 'CRM_Findpayment_Selector_Search',
+      'selectorLabel' => ts('Payments'),
+      'taskFile' => 'CRM/common/searchResultTasks.tpl',
+      'taskContext' => NULL,
+      'resultFile' => 'CRM/Findpayment/Form/Selector.tpl',
+      'resultContext' => NULL,
+      'taskClassName' => 'CRM_Findpayment_Task',
+    );
+    CRM_Contact_Form_Search::$_modeValues[PAYMENT_MODE] = $modeValue;
     if ($form->getVar('_componentMode') == PAYMENT_MODE) {
-      $modeValue = array(
-        'selectorName' => 'CRM_Findpayment_Selector_Search',
-        'selectorLabel' => ts('Payments'),
-        'taskFile' => 'CRM/common/searchResultTasks.tpl',
-        'taskContext' => NULL,
-        'resultFile' => 'CRM/Findpayment/Form/Selector.tpl',
-        'resultContext' => NULL,
-        'taskClassName' => 'CRM_Findpayment_Task',
-      );
-      CRM_Contact_Form_Search::$_modeValues[PAYMENT_MODE] = $modeValue;
       $form->assign($modeValue);
       $form->setVar('_modeValue', $modeValue);
       CRM_Contact_Form_Search::$_selectorName = $modeValue['selectorName'];
@@ -160,15 +160,6 @@ function findpayments_civicrm_buildForm($formName, &$form) {
   //   identified by url argument contect=payment
   if ($formName == 'CRM_Contribute_Form_ContributionView' && CRM_Utils_Array::value('context', $_GET) == 'payment') {
     CRM_Core_Resources::singleton()->addScriptFile('biz.jmaconsulting.findpayments', 'js/hide_form_buttons.js');
-  }
-  if ('CRM_Contact_Form_Search_Advanced' == $formName) {
-    $elementKey = CRM_Utils_Array::value('component_mode', $form->_elementIndex);
-    if (!empty($form->_elements[$elementKey])) {
-      $form->_elements[$elementKey]->_options[] = array(
-        'text' => ts('Payments'),
-        'attr' => array('value' => PAYMENT_MODE),
-      );
-    }
   }
 }
 
