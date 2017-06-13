@@ -2,6 +2,7 @@
 
 require_once 'findpayments.civix.php';
 
+const PAYMENT_MODE = 20;
 /**
  * Implements hook_civicrm_config().
  *
@@ -107,13 +108,70 @@ function findpayments_civicrm_caseTypes(&$caseTypes) {
   _findpayments_civix_civicrm_caseTypes($caseTypes);
 }
 
+function findpayments_civicrm_preProcess($formName, &$form) {
+  if ('CRM_Contact_Form_Search_Advanced' == $formName) {
+    if ($form->getVar('_componentMode') == PAYMENT_MODE) {
+      $modeValue = array(
+        'selectorName' => 'CRM_Findpayment_Selector_Search',
+        'selectorLabel' => ts('Payments'),
+        'taskFile' => 'CRM/common/searchResultTasks.tpl',
+        'taskContext' => NULL,
+        'resultFile' => 'CRM/Findpayment/Form/Selector.tpl',
+        'resultContext' => NULL,
+        'taskClassName' => 'CRM_Findpayment_Task',
+      );
+      CRM_Contact_Form_Search::$_modeValues[PAYMENT_MODE] = $modeValue;
+      $form->assign($modeValue);
+      $form->setVar('_modeValue', $modeValue);
+      CRM_Contact_Form_Search::$_selectorName = $modeValue['selectorName'];
+      $form->set('selectorName', $modeValue['selectorName']);
+      $submittedParams = $form->getVar('_params');
+      $selector = new $modeValue['selectorName'](
+        $submittedParams,
+        $form->_action,
+        NULL, FALSE, NULL,
+        "search", "advanced"
+      );
+      $selector->setKey($form->controller->_key);
+      $controller = new CRM_Contact_Selector_Controller($selector,
+        $form->get(CRM_Utils_Pager::PAGE_ID),
+        $form->get(CRM_Utils_Sort::SORT_ID),
+        CRM_Core_Action::VIEW,
+        $form,
+        CRM_Core_Selector_Controller::TRANSFER
+      );
+      $controller->setEmbedded(TRUE);
+      $controller->moveFromSessionToTemplate();
+    }
+  }
+}
+
+function findpayments_civicrm_searchTasks($context, &$tasks) {
+  if ($context == 'contact') {
+    $tasks[CRM_Findpayment_Task::EXPORT_PAYMENTS] = array(
+      'title' => ts('Export Payments'),
+      'class' => 'CRM_Findpayment_Form_Task_Export',
+    );
+  }
+}
+
 function findpayments_civicrm_buildForm($formName, &$form) {
   // hide form buttons of 'View' Contribution' page when accessed via 'Find Payment'
   //   identified by url argument contect=payment
   if ($formName == 'CRM_Contribute_Form_ContributionView' && CRM_Utils_Array::value('context', $_GET) == 'payment') {
     CRM_Core_Resources::singleton()->addScriptFile('biz.jmaconsulting.findpayments', 'js/hide_form_buttons.js');
   }
+  if ('CRM_Contact_Form_Search_Advanced' == $formName) {
+    $elementKey = CRM_Utils_Array::value('component_mode', $form->_elementIndex);
+    if (!empty($form->_elements[$elementKey])) {
+      $form->_elements[$elementKey]->_options[] = array(
+        'text' => ts('Payments'),
+        'attr' => array('value' => PAYMENT_MODE),
+      );
+    }
+  }
 }
+
 /**
  * Implements hook_civicrm_angularModules().
  *

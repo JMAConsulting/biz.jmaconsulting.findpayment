@@ -1,7 +1,7 @@
 <?php
 
 class CRM_Findpayment_Task {
-  const EXPORT_PAYMENTS = 1;
+ const EXPORT_PAYMENTS = 50;
 
   /**
    * The task array
@@ -20,7 +20,7 @@ class CRM_Findpayment_Task {
   public static function tasks() {
     if (!(self::$_tasks)) {
       self::$_tasks = array(
-        1 => array(
+        50 => array(
           'title' => ts('Export Payments'),
           'class' => 'CRM_Findpayment_Form_Task_Export',
           'result' => FALSE,
@@ -31,6 +31,9 @@ class CRM_Findpayment_Task {
     return self::$_tasks;
   }
 
+  public static function &permissionedTaskTitles($permission, $filter = FALSE) {
+    return self::taskTitles();
+  }
   /**
    * These tasks are the core set of task titles
    * on contributors
@@ -60,7 +63,7 @@ class CRM_Findpayment_Task {
     self::tasks();
     if (!$value || !CRM_Utils_Array::value($value, self::$_tasks)) {
       // make the print task by default
-      $value = 1;
+      $value = 50;
     }
     // this is possible since hooks can inject a task
     // CRM-13697
