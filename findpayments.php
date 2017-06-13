@@ -135,7 +135,7 @@ function findpayments_civicrm_preProcess($formName, &$form) {
       $selector->setKey($form->controller->_key);
       $controller = new CRM_Contact_Selector_Controller($selector,
         $form->get(CRM_Utils_Pager::PAGE_ID),
-        $form->get(CRM_Utils_Sort::SORT_ID),
+        NULL,
         CRM_Core_Action::VIEW,
         $form,
         CRM_Core_Selector_Controller::TRANSFER
