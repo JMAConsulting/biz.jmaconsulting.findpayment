@@ -1,10 +1,9 @@
 {include file="CRM/common/pager.tpl" location="top"}
-
 {strip}
   <table class="selector row-highlight">
     <thead class="sticky">
     <tr>
-      {if !$single and $context eq 'Search' }
+      {if !$single and in_array($context, array('Search', 'advanced'))}
         <th scope="col" title="Select Rows">{$form.toggleSelect.html}</th>
       {/if}
       {foreach from=$columnHeaders item=header}
@@ -27,7 +26,7 @@
     {foreach from=$rows item=row}
       <tr id="rowid{$row.id}" class="{cycle values="odd-row,even-row"}">
         {if !$single }
-          {if $context eq 'Search' }
+          {if in_array($context, array('Search', 'advanced')) }
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td>
           {/if}

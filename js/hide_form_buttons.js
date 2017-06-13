@@ -1,3 +1,3 @@
 CRM.$(function($) {
-  $('.action-link').hide();
+  $('.action-link, .crm-submit-buttons').hide();
 });
