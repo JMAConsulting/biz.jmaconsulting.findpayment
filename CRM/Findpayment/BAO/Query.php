@@ -126,7 +126,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
 
     $form->add('select', 'financialtrxn_currency',
       ts('Currency'),
-      CRM_Core_PseudoConstant::get('CRM_Contribute_DAO_Contribution', 'currency', array('labelColumn' => 'name')),
+      CRM_Core_OptionGroup::values('currencies_enabled'),
       FALSE, array('class' => 'crm-select2', 'placeholder' => '- select -')
     );
 
