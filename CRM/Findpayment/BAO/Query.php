@@ -13,15 +13,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     $contactFields = array('sort_name');
     foreach ($returnProperties as $fieldName) {
       if (!empty($query->_returnProperties[$fieldName])) {
-        if (in_array($fieldName, $contactFields)) {
-          $query->_select[$fieldName] = "contact_a.{$fieldName} as $fieldName";
-          $query->_element[$fieldName] = 1;
-          continue;
-        }
-        elseif ($fieldName == 'contribution_id') {
-          $query->_select[$fieldName] = "civicrm_contribution.id as $fieldName";
-          $query->_element[$fieldName] = 1;
-          $query->_tables['civicrm_contribution'] = 1;
+        if (substr($fieldName, 0, 14) != 'financialtrxn_') {
           continue;
         }
         $columnName = str_replace('financialtrxn_', '', $fieldName);
