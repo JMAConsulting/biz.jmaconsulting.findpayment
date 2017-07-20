@@ -33,6 +33,10 @@
           {$form.contribution_id.html}
         </div>
         <div class="float-left">
+          {$form.invoice_id.label}<br />
+          {$form.invoice_id.html}
+        </div>
+        <div class="float-left">
           {$form.financialtrxn_status_id.label}<br />
           {$form.financialtrxn_status_id.html}
         </div>

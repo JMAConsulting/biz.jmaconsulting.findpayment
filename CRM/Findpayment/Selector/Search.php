@@ -26,6 +26,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
   static $_properties = array(
     'id',
     'sort_name',
+    'invoice_id',
     'contact_id',
     'contribution_id',
     'financialtrxn_trxn_date',
@@ -320,6 +321,12 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
         'name' => ts('Name'),
         'sort' => 'sort_name',
         'direction' => CRM_Utils_Sort::DONTCARE,
+      ),
+      array(
+        'name' => ts('Invoice Number'),
+        'sort' => 'invoice_id',
+        'direction' => CRM_Utils_Sort::DONTCARE,
+        'field_name' => 'invoice_id',
       ),
       array(
         'name' => ts('Amount'),

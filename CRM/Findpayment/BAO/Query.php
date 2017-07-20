@@ -44,6 +44,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $qillTitles = array(
+      'invoice_id' => ts('Invoice Number'),
       'financialtrxn_id' => ts('Internal ID'),
       'financialtrxn_trxn_id' => ts('Transaction ID'),
       'financialtrxn_currency' => ts('Currency'),
@@ -116,6 +117,8 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     $form->addRule('financialtrxn_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
 
     $form->add('text', 'contribution_id', ts('Invoice ID'), array('size' => 6, 'maxlength' => 8));
+
+    $form->add('text', 'invoice_id', ts('Invoice Number'), array('size' => 6));
 
     $form->add('text', 'financialtrxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
 
@@ -193,6 +196,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
    public static function selectorReturnProperties() {
      $properties = array(
        'sort_name' => 1,
+       'invoice_id' => 1,
        'contribution_id' => 1,
        'financialtrxn_id' => 1,
        'financialtrxn_trxn_date' => 1,
