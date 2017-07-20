@@ -44,7 +44,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     list($name, $op, $value, $grouping, $wildcard) = $values;
 
     $qillTitles = array(
-      'invoice_id' => ts('Invoice Number'),
+      'invoice_number' => ts('Invoice Number'),
       'financialtrxn_id' => ts('Internal ID'),
       'financialtrxn_trxn_id' => ts('Transaction ID'),
       'financialtrxn_currency' => ts('Currency'),
@@ -52,7 +52,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       'financialtrxn_status_id' => ts('Contribution Status(s)'),
       'financialtrxn_check_number' => ts('Check Number'),
       'financialtrxn_card_type_id' => ts('Credit Card Type'),
-      'financialtrxn_pan_truncation' => ts('Pan Truncation'),
+      'financialtrxn_pan_truncation' => ts('Credit Card Number'),
     );
     switch ($name) {
       case 'financialtrxn_trxn_date':
@@ -118,7 +118,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
 
     $form->add('text', 'contribution_id', ts('Invoice ID'), array('size' => 6, 'maxlength' => 8));
 
-    $form->add('text', 'invoice_id', ts('Invoice Number'), array('size' => 6));
+    $form->add('text', 'invoice_number', ts('Invoice Number'), array('size' => 6));
 
     $form->add('text', 'financialtrxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
 
@@ -151,6 +151,9 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       );
       if ($columnName == 'card_type_id') {
         $attributes['label'] = ts('Card Type');
+      }
+      if ($columnName == 'pan_truncation') {
+        $attributes['label'] = ts('Card Number');
       }
       $form->addField($fieldName, $attributes);
     }
@@ -196,7 +199,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
    public static function selectorReturnProperties() {
      $properties = array(
        'sort_name' => 1,
-       'invoice_id' => 1,
+       'invoice_number' => 1,
        'contribution_id' => 1,
        'financialtrxn_id' => 1,
        'financialtrxn_trxn_date' => 1,
