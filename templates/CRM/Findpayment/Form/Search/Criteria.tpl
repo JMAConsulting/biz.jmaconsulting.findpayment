@@ -33,8 +33,8 @@
           {$form.contribution_id.html}
         </div>
         <div class="float-left">
-          {$form.invoice_id.label}<br />
-          {$form.invoice_id.html}
+          {$form.invoice_number.label}<br />
+          {$form.invoice_number.html}
         </div>
         <div class="float-left">
           {$form.financialtrxn_status_id.label}<br />
@@ -62,7 +62,7 @@
           {$form.financialtrxn_card_type_id.html}
         </div>
         <div class="float-left" id="financialtrxn_pan_truncation_wrapper">
-          {$form.financialtrxn_pan_truncation.label} <br />
+          {$form.financialtrxn_pan_truncation.label} {help id="card-number" file="CRM/Findpayment/Form/Search"}<br />
           {$form.financialtrxn_pan_truncation.html}
         </div>
       </td>
