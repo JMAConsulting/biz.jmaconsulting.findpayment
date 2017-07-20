@@ -329,7 +329,7 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
         'field_name' => 'invoice_number',
       ),
       array(
-        'name' => ts('Amount'),
+        'name' => ts('Payment Amount'),
         'sort' => 'financialtrxn_total_amount',
         'direction' => CRM_Utils_Sort::DONTCARE,
         'field_name' => 'financialtrxn_total_amount',
