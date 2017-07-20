@@ -158,20 +158,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       $form->addField($fieldName, $attributes);
     }
 
-    // Add batch select
-    $batches = CRM_Contribute_PseudoConstant::batch();
-
-    if (!empty($batches)) {
-      $form->add('select', 'contribution_batch_id',
-        ts('Batch Name'),
-        array(
-          '' => ts('- any -'),
-          // CRM-19325
-          'IS NULL' => ts('None'),
-        ) + $batches,
-        FALSE, array('class' => 'crm-select2')
-      );
-    }
+    $form->addEntityRef('contribution_batch_id', ts('Batch Name'), array('entity' => 'Batch'));
   }
 
   public function registerAdvancedSearchPane(&$panes) {
