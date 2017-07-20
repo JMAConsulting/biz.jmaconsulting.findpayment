@@ -156,12 +156,15 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
   public static function &links() {
     if (!(self::$_links)) {
       self::$_links = array(
+        /**
+        * This depends on CRM-20610 and is not completed
         CRM_Core_Action::UPDATE => array(
           'name' => ts('Edit'),
           'url' => 'civicrm/payment/edit',
           'qs' => "reset=1&id=%%id%%",
           'title' => ts('Edit Payment'),
         ),
+        */
       );
     }
     return self::$_links;
