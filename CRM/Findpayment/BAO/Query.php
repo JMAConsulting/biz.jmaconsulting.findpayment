@@ -71,6 +71,8 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
       case 'financialtrxn_amount_low':
       case 'financialtrxn_amount_high':
         // process min/max amount
+        $query->_tables['civicrm_financial_trxn']  = $query->_whereTables['civicrm_financial_trxn'] = 1;
+        $query->_tables['civicrm_contribution']  = $query->_whereTables['civicrm_contribution'] = 1;
         $query->numberRangeBuilder($values,
           'civicrm_financial_trxn', 'financialtrxn_amount',
           'total_amount', 'Payment Amount',
