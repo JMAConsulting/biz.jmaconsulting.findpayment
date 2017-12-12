@@ -1,26 +1,27 @@
 <?xml version="1.0"?>
 <extension key="biz.jmaconsulting.findpayments" type="module">
+  <downloadUrl>https://github.com/JMAConsulting/biz.jmaconsulting.findpayments/archive/findpayments-1.0.zip</downloadUrl>
   <file>findpayments</file>
-  <name>Find Payment Extension</name>
-  <description>This extension add 'Find Payment' search form in CiviCRM.</description>
+  <name>Find Payments</name>
+  <description>This extension allows to find and export payment(s) for contribution(s).</description>
   <license>AGPL-3.0</license>
   <maintainer>
-    <author>Monish Deb</author>
-    <email>everyone@jmaconsulting.biz</email>
+    <author>JMA Consulting</author>
+    <email>support@jmaconsulting.biz</email>
   </maintainer>
   <urls>
-    <url desc="Main Extension Page">http://FIXME</url>
-    <url desc="Documentation">http://FIXME</url>
-    <url desc="Support">http://FIXME</url>
+    <url desc="Main Extension Page">https://github.com/JMAConsulting/biz.jmaconsulting.findpayments</url>
+    <url desc="Documentation">https://github.com/JMAConsulting/biz.jmaconsulting.findpayments/blob/master/README.md</url>
+    <url desc="Support">https://github.com/JMAConsulting/biz.jmaconsulting.findpayments/issues</url>
     <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
   </urls>
-  <releaseDate>2017-06-09</releaseDate>
+  <releaseDate>2017-12-14</releaseDate>
   <version>1.0</version>
-  <develStage>alpha</develStage>
+  <develStage>stable</develStage>
   <compatibility>
     <ver>4.7</ver>
   </compatibility>
-  <comments>This module allow user to search payments.</comments>
+  <comments>Many thanks to IIDA for sponsoring the development of this extension, and also to LCD Services for collaborating during its development.</comments>
   <civix>
     <namespace>CRM/Findpayment</namespace>
   </civix>
