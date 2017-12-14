@@ -19,14 +19,14 @@ function _findpayments_civix_civicrm_config(&$config = NULL) {
   $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
   $extDir = $extRoot . 'templates';
 
-  if ( is_array( $template->template_dir ) ) {
-      array_unshift( $template->template_dir, $extDir );
+  if (is_array($template->template_dir)) {
+    array_unshift($template->template_dir, $extDir);
   }
   else {
-      $template->template_dir = array( $extDir, $template->template_dir );
+    $template->template_dir = array($extDir, $template->template_dir);
   }
 
-  $include_path = $extRoot . PATH_SEPARATOR . get_include_path( );
+  $include_path = $extRoot . PATH_SEPARATOR . get_include_path();
   set_include_path($include_path);
 }
 
@@ -44,7 +44,7 @@ function _findpayments_civix_civicrm_xmlMenu(&$files) {
 }
 
 /**
- * Implements hook_civicrm_install().
+ * (Delegated) Implements hook_civicrm_install().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
@@ -56,7 +56,7 @@ function _findpayments_civix_civicrm_install() {
 }
 
 /**
- * Implements hook_civicrm_uninstall().
+ * (Delegated) Implements hook_civicrm_uninstall().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
@@ -117,7 +117,7 @@ function _findpayments_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL)
  * @return CRM_Findpayments_Upgrader
  */
 function _findpayments_civix_upgrader() {
-  if (!file_exists(__DIR__.'/CRM/Findpayments/Upgrader.php')) {
+  if (!file_exists(__DIR__ . '/CRM/Findpayments/Upgrader.php')) {
     return NULL;
   }
   else {
@@ -153,7 +153,8 @@ function _findpayments_civix_find_files($dir, $pattern) {
       while (FALSE !== ($entry = readdir($dh))) {
         $path = $subdir . DIRECTORY_SEPARATOR . $entry;
         if ($entry{0} == '.') {
-        } elseif (is_dir($path)) {
+        }
+        elseif (is_dir($path)) {
           $todos[] = $path;
         }
       }
@@ -265,20 +266,22 @@ function _findpayments_civix_insert_navigation_menu(&$menu, $path, $item) {
   if (empty($path)) {
     $menu[] = array(
       'attributes' => array_merge(array(
-        'label'      => CRM_Utils_Array::value('name', $item),
-        'active'     => 1,
+        'label' => CRM_Utils_Array::value('name', $item),
+        'active' => 1,
       ), $item),
     );
     return TRUE;
   }
   else {
     // Find an recurse into the next level down
-    $found = false;
+    $found = FALSE;
     $path = explode('/', $path);
     $first = array_shift($path);
     foreach ($menu as $key => &$entry) {
       if ($entry['attributes']['name'] == $first) {
-        if (!$entry['child']) $entry['child'] = array();
+        if (!$entry['child']) {
+          $entry['child'] = array();
+        }
         $found = _findpayments_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
       }
     }
@@ -305,7 +308,7 @@ function _findpayments_civix_fixNavigationMenu(&$nodes) {
     if ($key === 'navID') {
       $maxNavID = max($maxNavID, $item);
     }
-    });
+  });
   _findpayments_civix_fixNavigationMenuItems($nodes, $maxNavID, NULL);
 }
 

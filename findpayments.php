@@ -21,8 +21,6 @@ function findpayments_civicrm_queryObjects(&$queryObjects, $type) {
 /**
  * Implements hook_civicrm_xmlMenu().
  *
- * @param array $files
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
 function findpayments_civicrm_xmlMenu(&$files) {
@@ -68,13 +66,6 @@ function findpayments_civicrm_disable() {
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed
- *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
 function findpayments_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
@@ -95,12 +86,6 @@ function findpayments_civicrm_managed(&$entities) {
 
 /**
  * Implements hook_civicrm_caseTypes().
- *
- * Generate a list of case-types.
- *
- * @param array $caseTypes
- *
- * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
@@ -174,7 +159,7 @@ function findpayments_civicrm_buildForm($formName, &$form) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function findpayments_civicrm_angularModules(&$angularModules) {
-_findpayments_civix_civicrm_angularModules($angularModules);
+  _findpayments_civix_civicrm_angularModules($angularModules);
 }
 
 /**
