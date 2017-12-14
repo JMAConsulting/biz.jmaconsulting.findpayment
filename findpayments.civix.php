@@ -345,7 +345,7 @@ function _findpayments_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NU
   $configured = TRUE;
 
   $settingsDir = __DIR__ . DIRECTORY_SEPARATOR . 'settings';
-  if(is_dir($settingsDir) && !in_array($settingsDir, $metaDataFolders)) {
+  if (is_dir($settingsDir) && !in_array($settingsDir, $metaDataFolders)) {
     $metaDataFolders[] = $settingsDir;
   }
 }
