@@ -122,8 +122,6 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
 
     $form->add('text', 'invoice_number', ts('Invoice Number'), array('size' => 6));
 
-    $form->add('text', 'financialtrxn_trxn_id', ts('Transaction ID'), array('size' => 6, 'maxlength' => 8));
-
     $form->add('select', 'financialtrxn_payment_instrument_id', ts('Payment Method'),
       CRM_Contribute_PseudoConstant::paymentInstrument(),
       FALSE, array('class' => 'crm-select2', 'multiple' => 'multiple', 'placeholder' => '- any -')
@@ -141,6 +139,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     );
 
     foreach (array(
+      'financialtrxn_trxn_id',
       'financialtrxn_card_type_id',
       'financialtrxn_check_number',
       'financialtrxn_pan_truncation',
