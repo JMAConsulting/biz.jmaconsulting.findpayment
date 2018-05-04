@@ -17,6 +17,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
           continue;
         }
         $columnName = str_replace('financialtrxn_', '', $fieldName);
+        $fieldName = $columnName == 'id' ? $columnName : $fieldName;
         $query->_select[$fieldName] = "civicrm_financial_trxn.{$columnName} as $fieldName";
         $query->_element[$fieldName] = 1;
         $query->_tables['civicrm_contribution'] = 1;

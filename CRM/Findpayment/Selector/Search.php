@@ -24,11 +24,11 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
    * @var array
    */
   static $_properties = array(
-    'id',
     'sort_name',
     'invoice_number',
     'contact_id',
     'contribution_id',
+    'financialtrxn_id',
     'financialtrxn_trxn_date',
     'financialtrxn_total_amount',
     'financialtrxn_currency',
