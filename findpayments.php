@@ -180,7 +180,7 @@ function findpayments_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 function findpayments_civicrm_navigationMenu(&$menu) {
   foreach (array('Contributions', 'Search...') as $parentName) {
     _findpayments_civix_insert_navigation_menu($menu, $parentName, array(
-      'label' => ts('Find Payments', array('domain' => 'biz.jmaconsulting.findpayment')),
+      'label' => ts('Find Payments', array('domain' => 'biz.jmaconsulting.findpayments')),
       'name' => 'find_payments',
       'url' => 'civicrm/payment/search?reset=1',
       'permission' => 'administer CiviCRM,access CiviContribute',
