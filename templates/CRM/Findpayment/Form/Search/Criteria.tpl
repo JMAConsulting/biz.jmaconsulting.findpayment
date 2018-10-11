@@ -75,6 +75,12 @@
         </td>
       {/if}
     </tr>
+    {if $financialTrxnGroupTree}
+      <tr>
+        <td colspan="2">
+        {include file="CRM/Custom/Form/Search.tpl" groupTree=$financialTrxnGroupTree showHideLinks=false}</td>
+      </tr>
+    {/if}
     <tr>
       <td colspan="2">{$form.buttons.html}</td>
     </tr>

@@ -231,6 +231,8 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
     // process the result of the query
     $rows = array();
 
+    self::$_properties = array_merge(self::$_properties, array_keys(CRM_Core_BAO_CustomField::getFieldsForImport('FinancialTrxn')));
+
     $permissions = array(CRM_Core_Permission::VIEW);
     if (CRM_Core_Permission::check('edit contributions')) {
       $permissions[] = CRM_Core_Permission::EDIT;

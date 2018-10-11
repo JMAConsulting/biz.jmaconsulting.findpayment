@@ -201,6 +201,12 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
        'financialtrxn_check_number' => 1,
        'financialtrxn_pan_truncation' => 1,
      );
+     $fields = CRM_Core_BAO_CustomField::getFieldsForImport('FinancialTrxn');
+     if (!empty($fields)) {
+       foreach ($fields as $name => $dontCare) {
+         $properties[$name] = 1;
+       }
+     }
 
      return $properties;
    }
