@@ -257,6 +257,9 @@ class CRM_Findpayment_Selector_Search extends CRM_Core_Selector_Base implements 
         if (property_exists($result, $property)) {
           $row[$property] = $result->$property;
         }
+        if ($property == 'financialtrxn_id') {
+          $row[$property] = $result->id;
+        }
       }
 
       $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $row['financialtrxn_payment_instrument_id']);
