@@ -4,7 +4,7 @@
 
 ## Overview
 
-This extension allows to find and export payment(s) for contribution(s).
+This extension allows users to find and export payment(s) for contribution(s). It adds a Find Payments menu item and enhances the Advanced Search with payment search criteria.
 
 ## Installation
 
@@ -26,4 +26,4 @@ This extension allows to find and export payment(s) for contribution(s).
 
 JMA Consulting developed and maintains this extension.
 
-Many thanks to IIDA for sponsoring the development of this extension, and also to LCD Services for collaborating during its development.
+Thanks to LCD Services for collaborating during the development of this extension.
