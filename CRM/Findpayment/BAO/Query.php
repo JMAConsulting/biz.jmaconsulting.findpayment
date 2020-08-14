@@ -98,7 +98,9 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
         $query->_tables['civicrm_financial_trxn']  = $query->_whereTables['civicrm_financial_trxn'] = 1;
         $query->_tables['civicrm_contribution']  = $query->_whereTables['civicrm_contribution'] = 1;
         list($op, $value) = CRM_Contact_BAO_Query::buildQillForFieldValue('CRM_Financial_DAO_FinancialTrxn', $dbName, $value, $op);
-        $query->_qill[$grouping][] = ts('%1 %2 %3', array(1 => $qillTitles[$name], 2 => $op, 3 => $value));
+        if ($name != 'financialtrxn_id') {
+          $query->_qill[$grouping][] = ts('%1 %2 %3', array(1 => $qillTitles[$name], 2 => $op, 3 => $value));
+        }
         return;
     }
   }
@@ -111,7 +113,7 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
   public static function buildSearchForm(&$form) {
     $form->add('hidden', 'hidden_financial_trxn', 1);
 
-    CRM_Core_Form_Date::buildDateRange($form, 'financialtrxn_trxn_date', 1, '_low', '_high', ts('From'), FALSE, FALSE);
+    $form->addDatePickerRange('financialtrxn_trxn_date', ts('From'), FALSE);
 
     $form->add('text', 'financialtrxn_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
     $form->addRule('financialtrxn_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');

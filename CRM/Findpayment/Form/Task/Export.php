@@ -38,11 +38,7 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
     );
   }
 
-  /**
-   * Process the form after the input has been submitted and validated.
-   */
-  public function postProcess() {
-    $config = CRM_Core_Config::singleton();
+  public function export(&$query) {
     $headers = array(
       ts('Contact Name'),
       ts('Contact ID'),
@@ -54,33 +50,49 @@ class CRM_Findpayment_Form_Task_Export extends CRM_Findpayment_Form_Task {
       ts('Transaction Status'),
       ts('Contribution Status'),
     );
+    $payment = [];
+
+    foreach ($query->fetchAll() as $row) {
+      $row = (object) $row;
+      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $row->financialtrxn_payment_instrument_id);
+      if (!empty($row->financialtrxn_card_type_id)) {
+        $paidByLabel .= sprintf(" (%s %s)",
+          CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $row->financialtrxn_card_type_id),
+          ($row->financialtrxn_pan_truncation) ? $row->financialtrxn_pan_truncation : ''
+        );
+      }
+      elseif (!empty($row->financialtrxn_check_number)) {
+        $paidByLabel .= sprintf(" (#%s)", $row->financialtrxn_check_number);
+      }
+
+      $payment[] = array(
+        $row->sort_name,
+        $row->contact_id,
+        $row->id,
+        $row->financialtrxn_trxn_date,
+        CRM_Utils_Money::format($row->financialtrxn_total_amount, $row->financialtrxn_currency),
+        $paidByLabel,
+        $row->financialtrxn_trxn_id,
+        CRM_Core_PseudoConstant::getLabel('CRM_Financial_DAO_FinancialTrxn', 'status_id', $row->financialtrxn_status_id),
+        CRM_Core_PseudoConstant::getLabel('CRM_Contribute_BAO_Contribution', 'contribution_status_id', $row->financialtrxn_status_id),
+      );
+    }
+
+    return [$headers, $payment];
+  }
+
+  /**
+   * Process the form after the input has been submitted and validated.
+   */
+  public function postProcess() {
+    $config = CRM_Core_Config::singleton();
+
+    list($headers, $payments) = $this->export($this->_queryResult);
+
     $csv = '"' . implode("\"$config->fieldSeparator\"",
         $headers
       ) . "\"\r\n";
-
-    while ($this->_queryResult->fetch()) {
-      $paidByLabel = CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'payment_instrument_id', $this->_queryResult->financialtrxn_payment_instrument_id);
-      if (!empty($this->_queryResult->financialtrxn_card_type_id)) {
-        $paidByLabel .= sprintf(" (%s %s)",
-          CRM_Core_PseudoConstant::getLabel('CRM_Core_BAO_FinancialTrxn', 'card_type_id', $this->_queryResult->financialtrxn_card_type_id),
-          ($this->_queryResult->financialtrxn_pan_truncation) ? $this->_queryResult->financialtrxn_pan_truncation : ''
-        );
-      }
-      elseif (!empty($this->_queryResult->financialtrxn_check_number)) {
-        $paidByLabel .= sprintf(" (#%s)", $this->_queryResult->financialtrxn_check_number);
-      }
-
-      $payment = array(
-        $this->_queryResult->sort_name,
-        $this->_queryResult->contact_id,
-        $this->_queryResult->financialtrxn_id,
-        $this->_queryResult->financialtrxn_trxn_date,
-        CRM_Utils_Money::format($this->_queryResult->financialtrxn_total_amount, $this->_queryResult->financialtrxn_currency),
-        $paidByLabel,
-        $this->_queryResult->financialtrxn_trxn_id,
-        CRM_Core_PseudoConstant::getLabel('CRM_Financial_DAO_FinancialTrxn', 'status_id', $this->_queryResult->financialtrxn_status_id),
-        CRM_Core_PseudoConstant::getLabel('CRM_Contribute_BAO_Contribution', 'contribution_status_id', $this->_queryResult->financialtrxn_status_id),
-      );
+    foreach ($payments as $payment) {
       $csv .= '"' . implode("\"$config->fieldSeparator\"",
           $payment
       ) . "\"\r\n";

@@ -63,7 +63,7 @@ class CRM_Findpayment_Form_Task extends CRM_Core_Form {
     $query->_tables['civicrm_financial_trxn'] = $query->_whereTables['civicrm_financial_trxn'] = 1;
     $query->_distinctComponentClause = " civicrm_financial_trxn.id ";
     $query->_groupByComponentClause = " GROUP BY civicrm_financial_trxn.id ";
-    $sort = " ORDER BY civicrm_financial_trxn.id desc ";
+    $sort = "civicrm_financial_trxn.id desc ";
 
     $form->_queryResult = $query->searchQuery(0, 0, $sort,
       FALSE, FALSE,

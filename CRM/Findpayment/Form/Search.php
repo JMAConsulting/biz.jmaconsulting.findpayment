@@ -124,6 +124,7 @@ class CRM_Findpayment_Form_Search extends CRM_Core_Form_Search {
     }
 
     CRM_Core_BAO_CustomValue::fixCustomFieldValue($this->_formValues);
+    $this->_formValues = array_merge(['financialtrxn_id' => ['IS NOT NULL' => 1]], $this->_formValues);
 
     $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues($this->_formValues);
 
