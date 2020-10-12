@@ -116,10 +116,10 @@ class CRM_Findpayment_BAO_Query extends CRM_Contact_BAO_Query_Interface {
     $form->addDatePickerRange('financialtrxn_trxn_date', ts('From'), FALSE);
 
     $form->add('text', 'financialtrxn_amount_low', ts('From'), array('size' => 8, 'maxlength' => 8));
-    $form->addRule('financialtrxn_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('9.99', ' '))), 'money');
+    $form->addRule('financialtrxn_amount_low', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::formatLocaleNumericRoundedByOptionalPrecision('9.99', 9))), 'money');
 
     $form->add('text', 'financialtrxn_amount_high', ts('To'), array('size' => 8, 'maxlength' => 8));
-    $form->addRule('financialtrxn_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+    $form->addRule('financialtrxn_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::formatLocaleNumericRoundedByOptionalPrecision('99.99', 9))), 'money');
 
     $form->add('text', 'contribution_id', ts('Invoice ID'), array('size' => 6, 'maxlength' => 8));
 
